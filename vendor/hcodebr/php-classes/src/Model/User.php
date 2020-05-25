@@ -16,8 +16,6 @@ class User extends Model{
 		$user = new User();
 
 		if (isset($_SESSION[User::SESSION]) && (int)$_SESSION[User::SESSION]['iduser'] > 0) {
-			
-			$user = new User();
 
 			$user->setData($_SESSION[User::SESSION]);
 
