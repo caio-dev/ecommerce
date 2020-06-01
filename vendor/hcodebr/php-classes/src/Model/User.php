@@ -9,7 +9,7 @@ use \Hcode\Mailer;
 class User extends Model {
 
 	const SESSION = "User";
-	const SECRET = "HcodePhp7_Secret";
+	const SECRET = "Caio__pHp__@2020";
 	const SECRET_IV = "HcodePhp7_Secret_IV";
 	const ERROR = "UserError";
 	const ERROR_REGISTER = "UserErrorRegister";
@@ -144,6 +144,8 @@ class User extends Model {
 			":inadmin"			=>$this->getinadmin()
 		));
 
+		
+
 		$this->setData($results[0]);
 
 	}
@@ -251,7 +253,7 @@ class User extends Model {
 					
 				}				
 
-				$mailer = new Mailer($data['desemail'], $data['desperson'], "Redefinir senha da Hcode Store", "forgot", array(
+				$mailer = new Mailer($data['desemail'], $data['desperson'], "Redefinir senha da Caio Store", "forgot", array(
 					"name"=>$data['desperson'],
 					"link"=>$link
 				));				
