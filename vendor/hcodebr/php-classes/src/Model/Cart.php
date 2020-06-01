@@ -101,12 +101,12 @@ class Cart extends Model {
 		$sql = new Sql();
 
 		$results = $sql->select("CALL sp_carts_save(:idcart, :dessessionid, :iduser, :deszipcode, :vlfreight, :nrdays)", [
-			':idcart'=>$this->getidcart(),
-			':dessessionid'=>$this->getdessessionid(),
-			':iduser'=>$this->getiduser(),
-			':deszipcode'=>$this->getdeszipcode(),
-			':vlfreight'=>$this->getvlfreight(),
-			':nrdays'=>$this->getnrdays()
+			':idcart'			=>$this->getidcart(),
+			':dessessionid'		=>$this->getdessessionid(),
+			':iduser'			=>$this->getiduser(),
+			':deszipcode'		=>$this->getdeszipcode(),
+			':vlfreight'		=>$this->getvlfreight(),
+			':nrdays'			=>$this->getnrdays()
 		]);
 
 		$this->setData($results[0]);
@@ -207,20 +207,20 @@ class Cart extends Model {
 			if ($totals['vllength'] < 16) $totals['vllength'] = 16;
 
 			$qs = http_build_query([
-				'nCdEmpresa'			=>'',
-				'sDsSenha'				=>'',
-				'nCdServico'			=>'40010',
-				'sCepOrigem'			=>'09853120',
-				'sCepDestino'			=>$nrzipcode,
-				'nVlPeso'				=>$totals['vlweight'],
-				'nCdFormato'			=>'1',
-				'nVlComprimento'		=>$totals['vllength'],
-				'nVlAltura'				=>$totals['vlheight'],
-				'nVlLargura'			=>$totals['vlwidth'],
-				'nVlDiametro'			=>'0',
-				'sCdMaoPropria'			=>'S',
-				'nVlValorDeclarado'		=>$totals['vlprice'],
-				'sCdAvisoRecebimento'	=>'S'
+				'nCdEmpresa'=>'',
+				'sDsSenha'=>'',
+				'nCdServico'=>'40010',
+				'sCepOrigem'=>'50030130',
+				'sCepDestino'=>$nrzipcode,
+				'nVlPeso'=>$totals['vlweight'],
+				'nCdFormato'=>'1',
+				'nVlComprimento'=>$totals['vllength'],
+				'nVlAltura'=>$totals['vlheight'],
+				'nVlLargura'=>$totals['vlwidth'],
+				'nVlDiametro'=>'0',
+				'sCdMaoPropria'=>'S',
+				'nVlValorDeclarado'=>$totals['vlprice'],
+				'sCdAvisoRecebimento'=>'S'
 			]);
 
 			$xml = simplexml_load_file("http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx/CalcPrecoPrazo?".$qs);

@@ -11,12 +11,12 @@ use \Hcode\Model\Address;
 
 $app->get('/', function() {
 
-	$products = Product::listAll();
+    $products = Product::listAll();
     
     $page = new Page();
 
     $page->setTpl("index", [
-    	'products'=>Product::checkList($products)
+        'products'=>Product::checkList($products)
     ]);
 
 });
@@ -24,70 +24,70 @@ $app->get('/', function() {
 
 $app->get("/categories/:idcategory", function($idcategory){
 
-	$page = (isset($_GET['page'])) ? (int)$_GET['page'] : 1;
+    $page = (isset($_GET['page'])) ? (int)$_GET['page'] : 1;
 
-	$category = new Category();
+    $category = new Category();
 
-	$category->get((int)$idcategory);
+    $category->get((int)$idcategory);
 
-	$pagination = $category->getProductsPage($page);
+    $pagination = $category->getProductsPage($page);
 
-	$pages = [];
+    $pages = [];
 
-	for ($i=1; $i <= $pagination['pages']; $i++) { 
-		array_push($pages, [
-			'link'=>'/categories/'.$category->getidcategory().'?page='.$i,
-			'page'=>$i
-		]);
-	}
+    for ($i=1; $i <= $pagination['pages']; $i++) { 
+        array_push($pages, [
+            'link'=>'/categories/'.$category->getidcategory().'?page='.$i,
+            'page'=>$i
+        ]);
+    }
 
 
-	$page = new Page();
+    $page = new Page();
 
-	$page->setTpl("category", [
-		'category'=>$category->getValues(),
-		'products'=>$pagination["data"],
-		'pages'=>$pages
-	]);
+    $page->setTpl("category", [
+        'category'  =>$category->getValues(),
+        'products'  =>$pagination["data"],
+        'pages'     =>$pages
+    ]);
 
 });
 
 
 $app->get("/products/:desurl", function($desurl){
 
-	$product = new Product();
+    $product = new Product();
 
-	$product->getFromURL($desurl);
+    $product->getFromURL($desurl);
 
     $page = new Page();
 
     $page->setTpl("product-detail", [
-    	'product'=>$product->getValues(),
-    	'categories'=>$product->getCategories()
+        'product'   =>$product->getValues(),
+        'categories'=>$product->getCategories()
     ]);
 
 });
 
 $app->get("/cart", function(){
 
-	$cart = Cart::getFromSession();
+    $cart = Cart::getFromSession();
 
-	//var_dump($cart->getProducts());
-	//exit;
+    // var_dump($cart->getProducts());
+    // exit;
 
     $page = new Page();
 
     $page->setTpl("cart", [
-    	'cart'=>$cart->getValues(),
-    	'products'=>$cart->getProducts(),
-    	'error'=>Cart::getMsgError()
+        'cart'      =>$cart->getValues(),
+        'products'  =>$cart->getProducts(),
+        'error'     =>Cart::getMsgError()
     ]);
 
 });
 
 $app->get("/cart/:idproduct/add", function($idproduct){
 
-	$product = new Product();
+    $product = new Product();
 
     $product->get((int)$idproduct);
 
@@ -95,11 +95,11 @@ $app->get("/cart/:idproduct/add", function($idproduct){
 
     $qtd = (isset($_GET['qtd'])) ? (int)$_GET['qtd'] : 1;
 
-	for ($i=0; $i < $qtd; $i++) { 
+    for ($i=0; $i < $qtd; $i++) { 
 
         $cart->addProduct($product);
 
-	}    
+    }    
 
     header("Location: /cart");
     exit;
@@ -108,7 +108,7 @@ $app->get("/cart/:idproduct/add", function($idproduct){
 
 $app->get("/cart/:idproduct/minus", function($idproduct){
 
-	$product = new Product();
+    $product = new Product();
 
     $product->get((int)$idproduct);
 
@@ -123,7 +123,7 @@ $app->get("/cart/:idproduct/minus", function($idproduct){
 
 $app->get("/cart/:idproduct/remove", function($idproduct){
 
-	$product = new Product();
+    $product = new Product();
 
     $product->get((int)$idproduct);
 
@@ -138,28 +138,28 @@ $app->get("/cart/:idproduct/remove", function($idproduct){
 
 $app->post("/cart/freight", function(){
 
-	$cart = Cart::getFromSession();
+    $cart = Cart::getFromSession();
 
-	$cart->setFreigth($_POST['zipcode']);
+    $cart->setFreight($_POST['zipcode']);
 
-	header("Location: /cart");
-	exit;
+    header("Location: /cart");
+    exit;
 
 });
 
 $app->get("/checkout", function(){
 
-	User::verifyLogin(false);
+    User::verifyLogin(false);
 
-	$cart = Cart::getFromSession();
+    $cart = Cart::getFromSession();
 
-	$address = new Address();
+    $address = new Address();
 
     $page = new Page();
 
     $page->setTpl("checkout", [
-    	'cart'=>$cart->getValues(),
-    	'address'=>$address->getValues()
+        'cart'=>$cart->getValues(),
+        'address'=>$address->getValues()
     ]);
 });
 
@@ -168,21 +168,23 @@ $app->get("/login", function(){
     $page = new Page();
 
     $page->setTpl("login", [
-    	'error'=>User::getError()
+        'error'=>User::getError(),
+        'errorRegister'=>User::getErrorRegister(),
+        'registerValues'=>(isset($_SESSION['registerValues'])) ? $_SESSION['registerValues'] : ['name'=>'', 'email'=>'', 'phone'=>'']
     ]);
 });
 
 $app->post("/login", function(){
 
-	try {
+    try {
 
-   		User::login($_POST['login'], $_POST['password']);
+        User::login($_POST['login'], $_POST['password']);
 
-	} catch(Exception $e) {
+    } catch(Exception $e) {
 
-		User::setError($e->getMessage());
+        User::setError($e->getMessage());
 
-	}
+    }
 
 
    header("Location: /checkout");
@@ -191,13 +193,69 @@ $app->post("/login", function(){
 
 });
 
-
 $app->get("/logout", function(){
 
-	User::logout();
+    User::logout();
 
-	header("Location: /login");
-	exit;
+    header("Location: /login");
+    exit;
+
+});
+
+$app->post("/register", function(){
+
+    $_SESSION['registerValues'] = $_POST;
+
+    if (!isset($_POST['name']) || $_POST['name'] == '') {
+        
+        User::setErrorRegister("Preencha o seu nome");
+        header("Location: /login");
+        exit;
+
+    }
+
+    if (!isset($_POST['email']) || $_POST['email'] == '') {
+        
+        User::setErrorRegister("Preencha o seu E-mail");
+        header("Location: /login");
+        exit;
+
+    }
+
+    if (!isset($_POST['password']) || $_POST['password'] == '') {
+        
+        User::setErrorRegister("Preencha a sua Senha");
+        header("Location: /login");
+        exit;
+
+    }
+
+    if (User::checkLoginExist($_POST['email']) === true)  {
+        
+        User::setErrorRegister("Este e-mail já está sendo usado!");
+        header("Location: /login");
+        exit;
+
+    }
+
+    $user = new User();
+
+    $user->setData([
+        'inadmin'       =>0,
+        'deslogin'      =>$_POST['email'],
+        'desperson'     =>$_POST['name'],
+        'desemail'      =>$_POST['email'],
+        'despassword'   =>$_POST['password'],
+        'nrphone'       =>$_POST['phone']
+    ]);
+
+    $user->save();
+
+    User::login($_POST['email'], $_POST['password']);
+
+    header("Location: /checkout");
+    exit;
+    
 
 });
 
