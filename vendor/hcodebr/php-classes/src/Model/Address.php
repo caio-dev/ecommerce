@@ -42,7 +42,6 @@ class Address extends Model {
 			$this->setdescountry('Brasil');
 			$this->setdeszipcode($nrcep);
 
-
 		}
 	}
 
